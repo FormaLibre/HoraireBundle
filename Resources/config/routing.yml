@@ -1,0 +1,4 @@
+formalibre_horaire_bundle:
+    resource: "@FormaLibreHoraireBundle/Controller/"
+    type:     annotation
+    prefix:   /
