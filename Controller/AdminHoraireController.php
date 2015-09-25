@@ -29,7 +29,23 @@ class AdminHoraireController extends Controller
     public function adminToolIndexAction()
     {
         
-              
+   
+     $NewPeriodForm = $this ->createFormBuilder()
+        
+            ->add('name','text')
+            ->add('beginDate','text')
+            ->add('endDate','text')
+            ->add('beginHour','text')
+            ->add('endHour','text')
+            ->add('visible','checkbox',array(
+                  'required'  => false,)
+            )
+            ->add ('valider2','submit',array (
+                'label'=>'Ajouter'))
+               
+            ->getForm();
+ 
+        return array('NewPeriodForm' => $NewPeriodForm->createView()); 
     }
         
      
