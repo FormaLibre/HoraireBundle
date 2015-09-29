@@ -47,14 +47,14 @@ class PersonnalTimeSlot
     protected $groupId;
        /**
      * @ORM\ManyToOne(
-     *     targetEntity="FormaLibre\ResevationBundle\Entity\Resource"
+     *     targetEntity="FormaLibre\ReservationBundle\Entity\Resource"
      * )
      * @ORM\JoinColumn(name="local_id", onDelete="CASCADE", nullable=true)
      */
     protected $localId;
        /**
      * @ORM\ManyToOne(
-     *     targetEntity="FormaLibre\ResevationBundle\Entity\Reservation"
+     *     targetEntity="FormaLibre\ReservationBundle\Entity\Reservation"
      * )
      * @ORM\JoinColumn(name="local_reservation_id", onDelete="CASCADE", nullable=true)
      */

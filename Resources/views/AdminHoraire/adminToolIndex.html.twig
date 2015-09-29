@@ -11,8 +11,227 @@
                   <li role="presentation"><a href="{{path("formalibre_presence_horaire")}}">Horaire Type</a></li>
                 </ul>
             </div>
+            <br /><br />
+            <h3>{{"config_periode"|trans({},"horaire")}}</h3>
+            <form method="post" {{ form_enctype(NewPeriodForm) }} action="{{path("formalibre_horaire_admin_add_period")}}">
+                <div class="row">
+                    <div class="col-md-2">
+                        {{"choix_nom"|trans({},"horaire")}}:
+                        {{form_widget(NewPeriodForm.name)}}
+                    </div>    
+                    <div class="col-md-1">
+                        {{"start_date"|trans({},"horaire")}}:
+                        <span data-toggle="tooltip"
+                              data-placement="top"
+                              data-title="Indiquer le premier jour d'ouverture de l'établissement">
+                            {{form_widget(NewPeriodForm.beginDate)}}
+                        </span>
+                    </div> 
+                    <div class="col-md-1">
+                        {{"end_date"|trans({},"horaire")}}:
+                        <span data-toggle="tooltip"
+                              data-placement="top"
+                              data-title="Indiquer le dernier jour d'ouverture de l'établissement">
+                            {{form_widget(NewPeriodForm.endDate)}}
+                        </span>
+                    </div> 
+                    <div class="col-md-1">
+                        {{"start_hour"|trans({},"horaire")}}:
+                        <span data-toggle="tooltip"
+                              data-placement="top"
+                              data-title="Indiquer l'heure d'ouverture de l'établissement">
+                            {{form_widget(NewPeriodForm.beginHour)}}
+                        </span>
+                    </div> 
+                    <div class="col-md-1">
+                        {{"end_hour"|trans({},"horaire")}}:
+                       <span data-toggle="tooltip"
+                              data-placement="top"
+                              data-title="Indiquer l'heure de fermeture de l'établissement">
+                            {{form_widget(NewPeriodForm.endHour)}}
+                        </span>
+                    </div> 
+                     <div class="col-md-2">
+                        {{"visible_periode"|trans({},"horaire")}}
+                        {{form_widget(NewPeriodForm.visible)}}
+                    </div> 
+                    <div class="col-md-2">
+                        <button type="submit" 
+                                   class="btn btn-primary"
+                                   name="NewPeriodForm[valider]">
+                              {{"ajouter"|trans({},"horaire")}}
+                        </button>
+                    </div> 
+                </div>
+            </form>
+                    </br><br />        
+            <div class="table-responsive">
+                <table class="table">
+                    <tr>
+                        <th style='text-align:center;'>{{"name"|trans({},"horaire")}}</th>
+                        <th style='text-align:center;'>{{"start_date"|trans({},"horaire")}}</th>
+                        <th style='text-align:center;'>{{"end_date"|trans({},"horaire")}}</th>
+                        <th style='text-align:center;'>{{"start_hour"|trans({},"horaire")}}</th>
+                        <th style='text-align:center;'>{{"end_hour"|trans({},"horaire")}}</th>
+                        <th style='text-align:center;'>{{"visibility"|trans({},"horaire")}}</th>
+                        <th style='text-align:center;'>{{"actions"|trans({},"horaire")}}</th>
+                    </tr>
+                    {% for onePeriod in allPeriod %}
+                        <tr style='text-align:center;'>
+                            <td>{{onePeriod.getPeriodName()}}</td>
+                            <td>{{onePeriod.getPeriodBegin()|date('d-m-Y')}}</td>
+                            <td>{{onePeriod.getPeriodEnd()|date('d-m-Y')}}</td>
+                            <td>{{onePeriod.getPeriodBeginHour()|date('H:i')}}</td>
+                            <td>{{onePeriod.getPeriodEndHour()|date('H:i')}}</td>
+                            <td>
+                                {% if onePeriod.getVisibility()==1%}
+                                    <i class="fa fa-check"></i>
+                                {% else %}
+                                    <i class="fa fa-close"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="btn btn-default modifier-period-btn"
+                                                           data-period-id="{{onePeriod.getId()}}"
+                                                           data-toggle="tooltip" 
+                                                           data-placement="bottom" 
+                                                           title="" 
+                                                           data-original-title="Modifier" 
+                                                           role="button">
+                                    <i class="fa fa-pencil"></i>
+                                </span>
+                                 <a class="btn btn-default supprimer-period-btn"
+                                                           data-period-id="{{onePeriod.getId()}}"
+                                                           data-toggle="tooltip" 
+                                                           data-placement="bottom" 
+                                                           title="" 
+                                                           data-original-title="Supprimer" 
+                                                           role="button">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
             
-            
-        </di>
+        </div>
     </div>    
 {% endblock %}
+
+{% block stylesheets %}
+       {{ parent() }}
+       
+        <link rel='stylesheet' type='text/css' href='{{  asset('bundles/frontend/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.css') }}'/>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    
+    <script>
+        
+        $(".rightCheckbox").on("change",function(){
+      
+            var rightId=$(this).data("right-id");
+            var name=$(this).data("one-name");
+            
+            $.ajax({
+                url: Routing.generate('formalibre_presence_admin_right',{'right':rightId,'rightValue':name}),
+                type:'POST'
+            })
+          
+            
+            
+        });
+        
+        
+    </script>
+    <script type="text/javascript" src="{{ asset('bundles/frontend/moment.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/frontend/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.js') }}"></script>
+    <script type='text/javascript' src='{{ asset('bundles/frontend/moment-with-locales.min.js') }}'></script> 
+    <script type="text/javascript" src="{{ asset('bundles/formalibrehoraire/js/bootstrap-datetimepicker.min.js') }}"></script>
+    <script>
+        $(function () {
+            $('#form_beginHour').datetimepicker({
+                format: 'HH:mm',
+                locale:'fr',
+                 icons: {
+            time: "fa fa-clock-o",
+            date: "fa fa-calendar",
+            up: "fa fa-arrow-up",
+            down: "fa fa-arrow-down"
+        }
+            });
+        });
+        $(function () {
+            $('#form_endHour').datetimepicker({
+                format: 'HH:mm',
+                locale:'fr',
+                 icons: {
+            time: "fa fa-clock-o",
+            date: "fa fa-calendar",
+            up: "fa fa-arrow-up",
+            down: "fa fa-arrow-down"
+        }
+            });
+        });
+         $(function () {
+            $('#form_beginDate').datetimepicker({
+                format: 'D-M-YYYY',
+                locale:'fr',
+                 icons: {
+            time: "fa fa-clock-o",
+            date: "fa fa-calendar",
+            up: "fa fa-arrow-up",
+            down: "fa fa-arrow-down",
+            next: "fa fa-arrow-right",
+            previous:"fa fa-arrow-left"
+        }
+            });
+        });
+        $(function () {
+            $('#form_endDate').datetimepicker({
+                format: 'D-M-YYYY',
+                locale:'fr',
+                 icons: {
+            time: "fa fa-clock-o",
+            date: "fa fa-calendar",
+            up: "fa fa-arrow-up",
+            down: "fa fa-arrow-down",
+            next: "fa fa-arrow-right",
+            previous:"fa fa-arrow-left"
+        }
+            });
+        });
+    </script>
+    <script>
+    $(".modifier-period-btn").on("click",function(){
+       var periodId=$(this).data("period-id");
+        window.Claroline.Modal.displayForm(
+                            Routing.generate("formalibre_period_modif",{"thePeriod":periodId}),
+                            function() {
+                                window.location.reload();
+                            },
+                            function() {}
+                                );
+   
+    });    
+    
+    $(".supprimer-period-btn").on("click",function(){
+       var periodId=$(this).data("period-id");
+        window.Claroline.Modal.confirmRequest(
+                            Routing.generate("formalibre_period_supprimer",{"thePeriod":periodId}),
+                            function() {
+                                window.location.reload();
+                            },
+                            periodId,
+                            "Etes-vous certain de vouloir supprimer cette période ? Cela effacera également les horaires liés à cette période.",
+                            "Supression période"
+                                );
+   
+    });  
+                
+    </script>
+        
+
+{% endblock javascripts %}

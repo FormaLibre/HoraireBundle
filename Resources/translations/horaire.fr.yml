@@ -1,0 +1,11 @@
+config_periode: Configuration des périodes
+choix_nom: Choisissez un nom
+start_date: Date de début
+end_date: Date de fin
+start_hour: Début de journée
+end_hour: Fin de journée
+visible_periode: Rendre la période visible
+ajouter: Ajouter
+name: Nom
+visibility: Visible ?
+actions: Actions
