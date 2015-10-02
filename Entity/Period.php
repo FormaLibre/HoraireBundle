@@ -49,7 +49,7 @@ class Period
      *
      * @ORM\Column(name="visibility", type="boolean" )
      */
-    private $Visibility = false;
+    private $visibility = false;
     
     function getId() {
         return $this->id;
@@ -76,7 +76,7 @@ class Period
     }
 
     function getVisibility() {
-        return $this->Visibility;
+        return $this->visibility;
     }
 
     function setId($id) {
@@ -103,8 +103,8 @@ class Period
         $this->periodEndHour = $periodEndHour;
     }
 
-    function setVisibility($Visibility) {
-        $this->Visibility = $Visibility;
+    function setVisibility($visibility) {
+        $this->visibility = $visibility;
     }
 
 

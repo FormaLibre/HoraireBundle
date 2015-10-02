@@ -23,9 +23,9 @@ use Doctrine\ORM\Mapping as ORM;
      * )
      * @ORM\JoinColumn(name="period_id", onDelete="CASCADE")
      */
-    protected $PeriodId;
+    protected $periodId;
     /**
-     * @ORM\Column(name="num_period")
+     * @ORM\Column(name="name")
      */
     protected $name;
     /**
@@ -51,7 +51,7 @@ use Doctrine\ORM\Mapping as ORM;
     }
 
     function getPeriodId() {
-        return $this->PeriodId;
+        return $this->periodId;
     }
 
     function getName() {
@@ -78,8 +78,8 @@ use Doctrine\ORM\Mapping as ORM;
         $this->id = $id;
     }
 
-    function setPeriodId($PeriodId) {
-        $this->PeriodId = $PeriodId;
+    function setPeriodId($periodId) {
+        $this->periodId = $periodId;
     }
 
     function setName($name) {

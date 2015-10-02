@@ -1,0 +1,169 @@
+{% extends "ClarolineCoreBundle:Administration:layout.html.twig" %}
+
+{% set duration ='00:50:00' %}
+{% set startday ='07:30:00' %}
+{% set endday ='17:30:00' %}
+
+
+{#{% if schoolYearBeginHour|date('i')<30%}
+    {% set startday =schoolYearBeginHour|date('H')~':00:00'%}
+{% else %}
+    {% set theHour =schoolYearBeginHour|date('H') %}
+    {% set oneHourMore = theHour+1%}
+    {% set startday =oneHourMore~':00:00'%}
+{% endif %}    
+
+{% if schoolYearEndHour|date('i')<30%}
+    {% set endday =schoolYearEndHour|date('H')~':00:00'%}
+{% else %}
+    {% set theHour =schoolYearEndHour|date('H') %}
+    {% set oneHourMore = theHour+1%}
+    {% set endday =oneHourMore~':00:00'%}
+{% endif %} #}
+
+{% block section_content %} 
+
+    <div class="panel panel-default">
+        <div class="panel-body">   
+             <div>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs">
+                  <li role="presentation"><a href="{{path("formalibre_horaire_admin_tool_index")}}">Configurations</a></li>
+                  <li role="presentation" class="active"><a href="{{path("formalibre_horaire_horaires_type")}}">Horaire Type</a></li>
+                </ul>
+            </div>
+            </br>  
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>{{"horaire_for"|trans({},"horaire")}} : {{periodName}}</h4>
+                </div>
+            </br>
+            </div>
+            <form method="post" {{ form_enctype(periodSelection) }} 
+              action="{{path("formalibre_horaire_horaires_type")}}">
+                <div class="row">
+                    <div class="col-md-2">
+                        {{form_widget(periodSelection.selection)}}
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" 
+                           class="btn btn-primary"
+                           name="periodSelection[valider]">
+                          {{"valider"|trans({},"horaire")}} 
+                        </button>
+                    </div>
+                </div>
+            </form>  
+            <div id='calendar'></div>    
+       </div> 
+    </div> 
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel='stylesheet' type='text/css' href='{{ asset('bundles/frontend/jquery/plugin/fullcalendar-2.3.1/fullcalendar.min.css') }}'/>
+    <link rel='stylesheet' type='text/css' href='{{ asset('bundles/frontend/jquery/jquery-ui-1.9.2.custom/css/ui-lightness/jquery-ui-1.9.2.custom.css') }}'/>
+    <link rel='stylesheet' type='text/css' href='{{ asset('bundles/frontend/jquery/plugin/fullcalendar-2.3.1//fullcalendar.print.css') }}' media='print' />
+    <link rel='stylesheet' type='text/css' href='{{ asset('bundles/frontend/jquery/plugin/datepicker/css/datepicker.css') }}'>
+    <link rel='stylesheet' type='text/css' href='{{ asset('bundles/formalibrepresence/css/bootstrap-datetimepicker.min.css') }}'>
+
+    <style>
+        .fc-day-grid-event > .fc-content {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        .is-task {
+            padding-right: 3px;
+        }
+    </style>
+{% endblock %}  
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('bundles/frontend/moment.min.js') }}"></script>
+    <script type='text/javascript' src='{{ asset('bundles/frontend/jquery/plugin/fullcalendar-2.3.1/fullcalendar.min.js') }}' ></script>
+    <script type='text/javascript' src='{{ asset('bundles/clarolineagenda/js/calendar.js') }}'></script>
+    <script type='text/javascript' src='{{ asset('bundles/frontend/date.js') }}'></script>
+    <script type='text/javascript' src='{{ asset('bundles/frontend/moment-with-locales.min.js') }}'></script> 
+    <script type='text/javascript' src='{{ asset('bundles/formalibrepresence/js/fr.js') }}'></script>
+    <script>
+
+        $(document).ready(function() {
+
+            $('#calendar').fullCalendar({
+                    header: {   
+                                left:   'false',
+                                center: 'false',
+                                right:  'false'
+                            },
+                    dayClick: function(date, jsEvent, view) {
+                        
+                        var momentTime=date.format('H:mm');
+                        var momentDate=date.format('D-MM-YYYY');
+                        var period={{selectedPeriod.getId()}}
+                        window.Claroline.Modal.displayForm(
+                        Routing.generate("formalibre_horaire_new_timeSlot",{"momentTime":momentTime,"momentDate":momentDate,"period":period}),
+                        function() {
+                        window.location.reload();
+                            },
+                            function() {}
+                                );
+                        
+                        
+                        
+                    },      
+                    defaultView: 'agendaWeek',
+                    lang: 'fr',
+                    weekends: true,
+                    editable: false,
+                    firstDay:1,
+                    businessHours:{dow:[1,2,3,4,5,6]},
+                    defaultTimedEventDuration:'{{duration}}',
+                    forceEventDuration:true,
+                    timeFormat:'H(:mm)',
+                    columnFormat: 'dddd',
+                    titleFormat:'Horaire type',
+                    minTime:'{{startday}}',
+                    maxTime:'{{endday}}',
+                    dayNames:['Dimanche', 'Lundi', 'Mardi', 'Mercredi',
+                              'Jeudi', 'Vendredi', 'Samedi'],    
+                    //slotDuration:'{{duration}}',
+                    eventLimit: true, // allow "more" link when too many events
+
+                     events: [
+                            {% for item in timeSlot %}
+                               {
+                               id: {{ item.getId }},
+                               title: '{{ item.getName()}}',
+                               start: '{{item.getDate()|date('Y-m-d')}}T{{item.getBeginHour()|date('H:i:s')}}',
+                           end: '{{item.getDate()|date('Y-m-d')}}T{{item.getEndHour()|date('H:i:s')}}',
+                           url:'{{path("formalibre_horaire_change_timeslot", {"timeslot":item.getId()})}}',
+
+        
+                                }
+                              {% if loop.last %}{% else %},{% endif %}{% endfor %}
+
+                        ],
+                eventClick: function(calEvent, jsEvent, view) {
+                    jsEvent.preventDefault();
+                    window.Claroline.Modal.displayForm(
+                        calEvent.url,
+                        function() {
+                            window.location.reload();
+                         },
+                         function() {},
+                         "ChangeTimeSlotForm"
+            );
+
+         }
+            });
+
+
+
+    });
+
+    </script>
+{% endblock javascripts %}
+
+

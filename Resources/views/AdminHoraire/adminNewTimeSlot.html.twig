@@ -1,0 +1,85 @@
+
+{% set actualDate=momentDate|date("Y,m,d")%}
+
+<div class="modal-dialog"
+     role="dialog"
+     aria-labelledby="modalLabel"
+     aria-hidden="true"
+     id="modifier-modal"
+ >
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                &times;
+            </button>
+            <h3 class="modal-title" style="text-align: center;">
+                {{"ajout_timeslot_titre"|trans({},"horaire")}}
+                </br>
+                {{"period"|trans({},"horaire")}}: {{selectedPeriod.getPeriodName()}}
+            </h3>
+        </div>
+        <div class="modal-body">
+            
+            <form method="post" {{ form_enctype(newTimeSlotForm) }} 
+                  action="{{path("formalibre_horaire_add_timeslot",{"period":selectedPeriod.getId()})}}">
+                {{"add_name_fac"|trans({},"horaire")}}:
+                {{form_widget(newTimeSlotForm.name)}}
+                <div class="row">
+                    <div class="col-xs-6 col-sm-6">   
+                    {{"start"|trans({},"horaire")}}:
+                    {{form_widget(newTimeSlotForm.start,{ 'attr': {'value': momentTime} } )}}
+                    </div>
+                    <div class="col-xs-6 col-sm-6">
+                    {% set endTime=momentTime+'1' %}
+                    {{"end"|trans({},"horaire")}}:
+                    {{form_widget(newTimeSlotForm.end,{ 'attr': {'value': endTime} } )}}
+                    </div>
+                </div>
+                </br>
+                {{"day_copy"|trans({},"horaire")}}:
+                {{form_widget(newTimeSlotForm.day)}}
+                <button class="btn btn-primary" type="submit" name="newTimeSlotForm[valider]">{{"ajouter"|trans({},"horaire")}}</button> 
+            </form>
+
+        </div>
+    </div>
+</div>
+            
+            
+{% block javascripts %}
+    <script type="text/javascript" src="{{ asset('bundles/formalibrepresence/js/bootstrap-datetimepicker.min.js') }}"></script>
+    <script>
+        $(function () {
+            $('#form_start').datetimepicker({
+                format: 'LT',
+                 icons: {
+            time: "fa fa-clock-o",
+            date: "fa fa-calendar",
+            up: "fa fa-arrow-up",
+            down: "fa fa-arrow-down"
+        }
+            });
+        });
+        $(function () {
+            $('#form_end').datetimepicker({
+                format: 'LT',
+                 icons: {
+            time: "fa fa-clock-o",
+            date: "fa fa-calendar",
+            up: "fa fa-arrow-up",
+            down: "fa fa-arrow-down"
+        }
+            });
+        });
+    </script>
+    <script>
+        var textDate='{{actualDate}}';
+        var splitDate=textDate.split(',');
+        var actualDate= new Date(splitDate[0],splitDate[1]-1,splitDate[2]);
+        var day=actualDate.getDay();
+        day--;
+        $('#form_day_'+day).prop('checked','checked');
+    </script>
+        
+
+{% endblock %}
